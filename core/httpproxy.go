@@ -2,25 +2,26 @@ package core
 
 import (
 	"io"
-	"log"
 	"net"
 	"net/http"
 
 	"golang.org/x/net/proxy"
 )
 
-type HttpProxyRotineHandler struct {
+// HttpProxyRoutineHandler .....
+//
+//
+type HttpProxyRoutineHandler struct {
 	Dialer proxy.Dialer
 }
 
-func (h *HttpProxyRotineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *HttpProxyRoutineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	hijack, ok := w.(http.Hijacker)
 	if !ok {
 		http.Error(w, "webserver doesn't support hijacking", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println(r.URL.Scheme, r.URL)
 	port := r.URL.Port()
 	if port == "" {
 		port = "80"

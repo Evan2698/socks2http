@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("can not make proxy dialer:", err)
 	}
-	if err := http.ListenAndServe(*httpAddr, &core.HttpProxyRotineHandler{Dialer: socks5Dialer}); err != nil {
+	if err := http.ListenAndServe(*httpAddr, &core.HttpProxyRoutineHandler{Dialer: socks5Dialer}); err != nil {
 		log.Fatalln("can not start http server:", err)
 	}
 
