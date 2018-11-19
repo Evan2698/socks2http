@@ -31,26 +31,31 @@ func (h *HttpProxyRoutineHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
 	}
+
+	defer socksConn.Close()
 	httpConn, _, err := hijack.Hijack()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	defer httpConn.Close()
 	if r.Method == http.MethodConnect {
 		httpConn.Write([]byte("HTTP/1.1 200 Connection Established\r\n\r\n"))
 	} else {
 		r.Write(socksConn)
 	}
 
-	pipeConn := func(w, r net.Conn) {
+	msgRead := make(chan string)
+	msgWrite := make(chan string)
+	pipeConn := func(w, r net.Conn, ch chan<- string) {
 		io.Copy(w, r)
-		if c, ok := w.(*net.TCPConn); ok {
-			c.CloseWrite()
-		}
-		if c, ok := r.(*net.TCPConn); ok {
-			c.CloseRead()
-		}
+		ch <- "done!"
 	}
-	go pipeConn(socksConn, httpConn)
-	go pipeConn(httpConn, socksConn)
+
+	go pipeConn(socksConn, httpConn, msgRead)
+	go pipeConn(httpConn, socksConn, msgWrite)
+
+	<-msgRead
+	<-msgWrite
 }
