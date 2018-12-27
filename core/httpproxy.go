@@ -46,16 +46,10 @@ func (h *HttpProxyRoutineHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		r.Write(socksConn)
 	}
 
-	msgRead := make(chan string)
-	msgWrite := make(chan string)
-	pipeConn := func(w, r net.Conn, ch chan<- string) {
+	pipeConn := func(w, r net.Conn) {
 		io.Copy(w, r)
-		ch <- "done!"
 	}
 
-	go pipeConn(socksConn, httpConn, msgRead)
-	go pipeConn(httpConn, socksConn, msgWrite)
-
-	<-msgRead
-	<-msgWrite
+	go pipeConn(socksConn, httpConn)
+	pipeConn(httpConn, socksConn)
 }

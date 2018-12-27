@@ -1,6 +1,7 @@
 package main
 
 import (
+	"runtime"
 	"flag"
 	"log"
 	"net/http"
@@ -14,6 +15,7 @@ func main() {
 	httpAddr := flag.String("http", "0.0.0.0:8000", "local http proxy address")
 	socks5Addr := flag.String("socks5", "socks5://127.0.0.1:1080", "remote socks5 address")
 	flag.Parse()
+	runtime.GOMAXPROCS(runtime.NumCPU() * 4)
 
 	socksURL, err := url.Parse(*socks5Addr)
 	if err != nil {
