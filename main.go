@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	httpAddr := flag.String("http", "0.0.0.0:8008", "local http proxy address")
+	httpAddr := flag.String("http", "0.0.0.0:8000", "local http proxy address")
 	socks5Addr := flag.String("socks5", "socks5://127.0.0.1:1080", "remote socks5 address")
 	flag.Parse()
 
