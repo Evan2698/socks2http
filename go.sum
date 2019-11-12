@@ -1,0 +1,7 @@
+github.com/Evan2698/socks2http v0.0.0-20181227115234-dd5935935702 h1:V+kkKcJqtwrG5J0lOvQYmjMeV3lpJpbD/OwCPhu+NnQ=
+github.com/Evan2698/socks2http v0.0.0-20181227115234-dd5935935702/go.mod h1:042xOFI0zO3j+jW1gsQ4nt2pvF7jXXPnXKoiGNGE6ZI=
+golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+golang.org/x/net v0.0.0-20191109021931-daa7c04131f5 h1:bHNaocaoJxYBo5cw41UyTMLjYlb8wPY7+WFrnklbHOM=
+golang.org/x/net v0.0.0-20191109021931-daa7c04131f5/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
