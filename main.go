@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"runtime"
+	"sync"
 
 	"golang.org/x/net/proxy"
 )
@@ -47,12 +48,17 @@ func (h *HttpProxyRoutineHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 		r.Write(socksConn)
 	}
 
-	pipeConn := func(w, r net.Conn) {
-		io.Copy(w, r)
-	}
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go transfer(httpConn, socksConn, &wg)
+	go transfer(socksConn, httpConn, &wg)
+	wg.Wait()
 
-	go pipeConn(socksConn, httpConn)
-	pipeConn(httpConn, socksConn)
+}
+
+func transfer(src, dst net.Conn, wg *sync.WaitGroup) {
+	io.Copy(dst, src)
+	wg.Done()
 }
 
 func main() {
