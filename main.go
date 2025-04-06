@@ -1,15 +1,59 @@
 package main
 
 import (
-	"runtime"
 	"flag"
+	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
+	"runtime"
 
-	"github.com/Evan2698/socks2http/core"
 	"golang.org/x/net/proxy"
 )
+
+type HttpProxyRoutineHandler struct {
+	Dialer proxy.Dialer
+}
+
+func (h *HttpProxyRoutineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	hijack, ok := w.(http.Hijacker)
+	if !ok {
+		http.Error(w, "webserver doesn't support hijacking", http.StatusInternalServerError)
+		return
+	}
+
+	port := r.URL.Port()
+	if port == "" {
+		port = "80"
+	}
+	socksConn, err := h.Dialer.Dial("tcp", r.URL.Hostname()+":"+port)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+
+	defer socksConn.Close()
+	httpConn, _, err := hijack.Hijack()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer httpConn.Close()
+	if r.Method == http.MethodConnect {
+		httpConn.Write([]byte("HTTP/1.1 200 Connection Established\r\n\r\n"))
+	} else {
+		r.Write(socksConn)
+	}
+
+	pipeConn := func(w, r net.Conn) {
+		io.Copy(w, r)
+	}
+
+	go pipeConn(socksConn, httpConn)
+	pipeConn(httpConn, socksConn)
+}
 
 func main() {
 	httpAddr := flag.String("http", "0.0.0.0:8000", "local http proxy address")
@@ -25,7 +69,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("can not make proxy dialer:", err)
 	}
-	if err := http.ListenAndServe(*httpAddr, &core.HttpProxyRoutineHandler{Dialer: socks5Dialer}); err != nil {
+	if err := http.ListenAndServe(*httpAddr, &HttpProxyRoutineHandler{Dialer: socks5Dialer}); err != nil {
 		log.Fatalln("can not start http server:", err)
 	}
 
