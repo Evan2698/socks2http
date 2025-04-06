@@ -1,4 +1,2 @@
-github.com/Evan2698/socks2http v0.0.0-20181227115234-dd5935935702 h1:V+kkKcJqtwrG5J0lOvQYmjMeV3lpJpbD/OwCPhu+NnQ=
-github.com/Evan2698/socks2http v0.0.0-20181227115234-dd5935935702/go.mod h1:042xOFI0zO3j+jW1gsQ4nt2pvF7jXXPnXKoiGNGE6ZI=
 golang.org/x/net v0.38.0 h1:vRMAPTMaeGqVhG5QyLJHqNDwecKTomGeqbnfZyKlBI8=
 golang.org/x/net v0.38.0/go.mod h1:ivrbrMbzFq5J41QOQh0siUuly180yBYtLp+CKbEaFx8=
